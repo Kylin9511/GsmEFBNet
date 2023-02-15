@@ -26,13 +26,8 @@ class BeamformingSumRateLoss(nn.Module):
         HSetHermitian = torch.conj(torch.transpose(HSet, -1, -2))
         VSetHermitian = torch.conj(torch.transpose(VSet, -1, -2))
 
-        sigmaSet = (
-            self.noise_power * I_Nr + 1 / self.Nrf * HSet @ (VSet @ VSetHermitian) @ HSetHermitian
-        )  # N*CSetSize*Nr*Nr
-        try:  # For unknown reason, the torch.det() under CUDA env (torch1.10.0) could raise kernel error.
-            sigmaDetSet = torch.det(sigmaSet).real  # N*CSetSize, note that hermite matrix has a real determinant
-        except RuntimeError:  # It is weird that a simple rerun would solve the RuntimeError above.
-            sigmaDetSet = torch.det(sigmaSet).real
+        sigmaSet = self.noise_power * I_Nr + 1 / self.Nrf * HSet @ (VSet @ VSetHermitian) @ HSetHermitian
+        sigmaDetSet = torch.det(sigmaSet).real  # N*CSetSize, note that hermite matrix has a real determinant
         sumRateBeamforming = torch.mean(
             torch.log2(sigmaDetSet / torch.pow(self.noise_power, self.Nr))
         )  # N*CSetSize -> 1,

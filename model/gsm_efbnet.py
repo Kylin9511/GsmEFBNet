@@ -8,21 +8,13 @@ __all__ = ["GsmEFBNet"]
 
 
 class ConvBN(nn.Sequential):
-    def __init__(self, in_planes, out_planes, kernel_size, stride=1, groups=1):
+    def __init__(self, in_planes, out_planes, kernel_size, stride=1):
         padding = (kernel_size - 1) // 2
-        super(ConvBN, self).__init__(
-            OrderedDict(
-                [
-                    (
-                        "conv",
-                        nn.Conv1d(
-                            in_planes, out_planes, kernel_size, stride, padding=padding, groups=groups, bias=False
-                        ),
-                    ),
-                    ("bn", nn.BatchNorm1d(out_planes)),
-                ]
-            )
-        )
+        modules = [
+            ("conv", nn.Conv1d(in_planes, out_planes, kernel_size, stride, padding=padding, bias=False)),
+            ("bn", nn.BatchNorm1d(out_planes)),
+        ]
+        super(ConvBN, self).__init__(OrderedDict(modules))
 
 
 class EncoderNet(nn.Module):

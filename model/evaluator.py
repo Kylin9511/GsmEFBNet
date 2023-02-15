@@ -45,28 +45,14 @@ class GsmSumRate:
         HSetHermitian = torch.conj(torch.transpose(HSet, -1, -2))
         VSetHermitian = torch.conj(torch.transpose(VSet, -1, -2))
 
-        sigmaSet = (
-            self.noise_power * I_Nr + self.P / self.Nrf * HSet @ (VSet @ VSetHermitian) @ HSetHermitian
-        )  # N*CSetSize*Nr*Nr
-
+        sigmaSet = self.noise_power * I_Nr + self.P / self.Nrf * HSet @ (VSet @ VSetHermitian) @ HSetHermitian
         sigmaDetSet = torch.det(sigmaSet).real
-
         sumRateBeamforming = torch.mean(torch.log2(sigmaDetSet / torch.pow(self.noise_power, self.Nr))).to(
             device=self.device
         )  # N*CSetSize -> 1,
 
         # The additional GSM sum rate
-        # TODO: considering using torch.solve(A, B) as as better torch.inverse(A) @ B
-        # - https://pytorch.org/docs/stable/generated/torch.linalg.inv.html#torch.linalg.inv
         SigmaInvSet = torch.inverse(sigmaSet)  # N*CSetSize*Nr*Nr
-
-        # TODO: current version of sqrtm is slow and does not support gradient back-propagation.
-        # Note that if pytorch support sqrtm operator, the whole process can be done on GPU with huge acceleration.
-        # Several open-source resource provide sqrtm operator based on pytorch.
-        # Currently they are not pplied for easier coding, but could be referred to in the future if necessary.
-        # - A neat implementation: https://github.com/steveli/pytorch-sqrtm
-        # - A good discussion: https://github.com/pytorch/pytorch/issues/25481
-        #   - A comprehensive implementation: https://github.com/msubhransu/matrix-sqrt
         batch_size, CSetSize, _, _ = sigmaSet.size()
         sigmaSetNumpy = sigmaSet.resolve_conj().resolve_neg().numpy()  # .numpy(force=True) for torch>=1.13
         sigmaSqrtSetNumpy = np.zeros((batch_size, CSetSize, self.Nr, self.Nr), dtype=np.cdouble)
@@ -88,8 +74,6 @@ class GsmSumRate:
         yDensityExp = torch.exp(-(ySetExpandHermitian @ SigmaInvSetExpand @ ySetExpand).real)  # N*CSetSize*num_samples
         yDensitySet = yDensityCoefficient * yDensityExp.squeeze()  # N*CSetSize*num_samples
 
-        # This is hard to organize. The loop is necessary since the CMeanSet is derived
-        # from a fixed y_{idCSet} traverses through the overall CSet on the sigmaInvSet.
         yDensityCMeanSet = torch.zeros_like(yDensitySet)  # N*CSetSize*num_samples
         for idCSet in range(CSetSize):
             ySetTmp = ySet[:, idCSet, ...].unsqueeze(dim=1)  # N*1*num_samples*Nr

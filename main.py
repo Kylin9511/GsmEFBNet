@@ -12,7 +12,7 @@ def main():
     logger.info("=> PyTorch Version: {}".format(torch.__version__))
 
     # Environment initialization
-    device = init_device(args.seed, args.cpu, args.gpu, args.cpu_affinity)
+    device = init_device(args.seed, args.cpu_affinity)
 
     test_loader = MatRawChannelDataLoader(data_dir=args.test_data_dir, device=device, bs=None)
 

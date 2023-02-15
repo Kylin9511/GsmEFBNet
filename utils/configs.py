@@ -11,7 +11,7 @@ parser.add_argument(
 )
 parser.add_argument("-Nrf", "--rf-chains", required=True, type=int, help="the number of RF-chains at the base station")
 parser.add_argument(
-    "-Nk", "--antennas-each-group", required=True, type=int, help="the number of antennas at each group"
+    "-Nk", "--antennas-each-group", required=True, type=int, help="the number of antennas in each group"
 )
 parser.add_argument("-L", "--pilots", required=True, type=int, help="the number of pilots")
 parser.add_argument("-B", "--feedback-bits", required=True, type=int, help="the number of feedback bits")
@@ -28,8 +28,6 @@ parser.add_argument("--anneal-rate", default=1.001, type=float, help="the anneal
 
 parser.add_argument("--test-data-dir", type=str, required=True, help="the path of test dataset.")
 parser.add_argument("--seed", default=None, type=int, help="seed for initializing training. ")
-parser.add_argument("--gpu", default=None, type=int, help="GPU id to use.")
-parser.add_argument("--cpu", action="store_true", help="disable GPU training (default: False)")
 parser.add_argument("--cpu-affinity", default=None, type=str, help='CPU affinity, like "0xffff"')
 parser.add_argument("-e", "--evaluate", action="store_true", help="evaluate model on validation set")
 parser.add_argument(
