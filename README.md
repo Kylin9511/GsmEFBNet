@@ -1,5 +1,5 @@
 ## Overview
-This is the PyTorch implementation of paper [Deep Learning for Hybrid Beamforming with Finite Feedback in GSM Aided mmWave MIMO Systems](arxiv_wip) which has been submitted to IEEE for possible publication. The general spatial modulation scheme is first considered into the joint optimized pipeline of channel estimation, CSI feedback, and beamforming. The test script and trained models are listed here and the key results can be reproduced as a validation of our work.
+This is the PyTorch implementation of paper <[Deep Learning for Hybrid Beamforming with Finite Feedback in GSM Aided mmWave MIMO Systems](https://arxiv.org/abs/2302.07601)>, which has been submitted to IEEE for possible publication. The general spatial modulation scheme is first considered into the joint optimized pipeline of channel estimation, CSI feedback, and beamforming. The test script and trained models are listed here and the key results can be reproduced as a validation of our work.
 
 ## Requirements
 
